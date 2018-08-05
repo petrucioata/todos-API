@@ -78,3 +78,6 @@ pickle-email-*.html
 *.old
 *.jar
 xerial*.*
+
+# debugging files
+.byebug_history
