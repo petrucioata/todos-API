@@ -3,17 +3,14 @@ require 'rails_helper'
 RSpec.describe 'Todos API', type: :request do
   let!(:todos) { create_list(:todo, 10) }
   let(:todo_id) { todos.last.id }
+  before { subject }
 
   describe 'GET /todos' do
     subject(:get_all) { get '/todos' }
 
-    it 'returns status code 200' do
-      get_all
-      expect(response).to have_http_status(:ok)
-    end
+    it_behaves_like 'a successful request'
 
     it 'returns a list of todos' do
-      get_all
       expect(json).not_to be_empty
       expect(json.size).to eq 10
     end
@@ -23,13 +20,10 @@ RSpec.describe 'Todos API', type: :request do
     subject { get "/todos/#{todo_id}" }
 
     context 'when the record exists' do
-      it 'returns status code 200' do
-        subject
-        expect(response).to have_http_status(:ok)
-      end
+
+      it_behaves_like 'a successful request'
 
       it 'returns the todo' do
-        subject
         expect(json).not_to be_empty
         expect(json['id']).to eq(todo_id)
       end
@@ -38,13 +32,9 @@ RSpec.describe 'Todos API', type: :request do
     context 'when the record does not exist' do
       let(:todo_id) { -1 }
 
-      it 'returns status code 404' do
-        subject
-        expect(response).to have_http_status(:not_found)
-      end
+      it_behaves_like 'a not_found request'
 
       it 'returns an error message' do
-        subject
         expect(json['message']).to match(/Couldn't find Todo/)
       end
     end

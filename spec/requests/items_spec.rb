@@ -7,16 +7,12 @@ RSpec.describe 'Items API', type: :request do
   let(:item_id) { items.last.id }
 
   describe 'GET /todos/:todo_id/items' do
-    subject(:all_items) { get "/todos/#{todo_id}/items" }
+    before { get "/todos/#{todo_id}/items" }
 
     context 'when todo_id exists' do
-      it 'returns status code 200' do
-        all_items
-        expect(response).to have_http_status(:ok)
-      end
+      it_behaves_like 'a successful request'
 
       it 'returns a list pf items for specific todo' do
-        all_items
         expect(json).not_to be_empty
         expect(json.size).to eq 10
       end
@@ -25,30 +21,21 @@ RSpec.describe 'Items API', type: :request do
     context 'when todo does not exists' do
       let(:todo_id) { 0 }
 
-      it 'returns status code 404' do
-        all_items
-        expect(response).to have_http_status(:not_found)
-      end
+      it_behaves_like 'a not_found request'
 
       it 'returns an error message' do
-        all_items
         expect(json['message']).to match(/Couldn't find Todo with 'id'=[0-9]*/)
       end
     end
   end
 
   describe 'GET /todos/:todo_id/items/:id' do
-    subject { get "/todos/#{todo_id}/items/#{item_id}" }
+    before { get "/todos/#{todo_id}/items/#{item_id}" }
 
     context 'when the item exists' do
-      it 'returns status code 200' do
-        subject
-        expect(response).to have_http_status(:ok)
-      end
+      it_behaves_like 'a successful request'
 
       it 'returns the requested item' do
-        subject
-
         expect(json).not_to be_empty
         expect(json['name']).to eq(items.last.name)
         expect(json['done']).to be_falsy
@@ -58,10 +45,7 @@ RSpec.describe 'Items API', type: :request do
     context 'when the item does not exist' do
       let(:item_id) { 0 }
 
-      it 'returns status code 404' do
-        subject
-        expect(response).to have_http_status(:not_found)
-      end
+      it_behaves_like 'a not_found request'
 
       it 'returns an error message' do
         subject
