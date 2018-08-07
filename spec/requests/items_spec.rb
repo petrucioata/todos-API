@@ -53,4 +53,60 @@ RSpec.describe 'Items API', type: :request do
       end
     end
   end
+
+  describe 'POST /todos/:todo_id/items' do
+    subject(:create_item) { post "/todos/#{todo_id}/items", params: params }
+    before { create_item }
+
+    context 'when the params contains the required fields' do
+      let(:params) { { name: 'First Item', done: false } }
+
+      it_behaves_like 'an object created request'
+
+      it 'creates the item' do
+        expect(json['name']).to eq(params[:name])
+        expect(json['done']).to be_falsy
+      end
+    end
+
+    context 'when the params are invalid' do
+      let(:params) { {} }
+
+      it_behaves_like 'an unprocessable entity error'
+
+      it 'returns a validation failure error message' do
+        expect(json['message']).to match(/Validation failed:/)
+      end
+    end
+  end
+
+  describe 'PUT /todos/:todo_id/items/:id' do
+    before { put "/todos/#{todo_id}/items/#{item_id}", params: params }
+    let(:params) { { name: 'A different name' } }
+
+    context 'when the item exists' do
+      it_behaves_like 'a no content response'
+
+      it 'updates the item' do
+        updated_item = Item.find(item_id)
+        expect(updated_item.name).to eq(params[:name])
+      end
+    end
+
+    context 'when the item does not exist' do
+      let(:item_id) { 0 }
+
+      it_behaves_like 'a not_found request'
+
+      it 'returns a not found error message' do
+        expect(json['message']).to match(/Couldn't find Item/)
+      end
+    end
+  end
+
+  describe 'DELETE /todos/:todo_id/items/:id' do
+    before { delete "/todos/#{todo_id}/items/#{item_id}" }
+
+    it_behaves_like 'a no content response'
+  end
 end
