@@ -46,10 +46,7 @@ RSpec.describe 'Todos API', type: :request do
     context 'when there are missing params' do
       let(:params) { { title: 'Just a test' } }
 
-      it 'returns status code 422' do
-        create_todo
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
+      it_behaves_like 'an unprocessable entity request'
 
       it 'returns an error message' do
         create_todo
@@ -60,10 +57,7 @@ RSpec.describe 'Todos API', type: :request do
     context 'when the params are valid' do
       let(:params) { { title: 'A valid test', created_by: '1' } }
 
-      it 'returns status code 201 created' do
-        create_todo
-        expect(response).to have_http_status(:created)
-      end
+      it_behaves_like 'an object created request'
 
       it 'returns the created todo object' do
         create_todo
@@ -81,10 +75,7 @@ RSpec.describe 'Todos API', type: :request do
     context 'when the params are valid' do
       let(:params) { { title: 'Another title' } }
 
-      it 'returns status code 204' do
-        update_todo
-        expect(response).to have_http_status(:no_content)
-      end
+      it_behaves_like 'a no content response'
 
       it 'updaets the todo object' do
         update_todo

@@ -72,7 +72,7 @@ RSpec.describe 'Items API', type: :request do
     context 'when the params are invalid' do
       let(:params) { {} }
 
-      it_behaves_like 'an unprocessable entity error'
+      it_behaves_like 'an unprocessable entity request'
 
       it 'returns a validation failure error message' do
         expect(json['message']).to match(/Validation failed:/)
