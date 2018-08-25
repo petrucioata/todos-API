@@ -70,7 +70,7 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'PUT /todos/:id' do
-    let(:update_todo) { put "/todos/#{todo_id}", params: params }
+    before { put "/todos/#{todo_id}", params: params }
 
     context 'when the params are valid' do
       let(:params) { { title: 'Another title' } }
@@ -78,7 +78,6 @@ RSpec.describe 'Todos API', type: :request do
       it_behaves_like 'a no content response'
 
       it 'updaets the todo object' do
-        update_todo
         expect(response.body).to be_empty
       end
     end
