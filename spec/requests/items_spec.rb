@@ -1,13 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe 'Items API', type: :request do
-  let!(:todo) { create(:todo) }
+  let(:user) { create(:user) }
+  let!(:todo) { create(:todo, created_by: user.id) }
   let(:todo_id) { todo.id }
   let!(:items) { create_list(:item, 10, todo_id: todo.id) }
   let(:item_id) { items.last.id }
+  let(:headers) { valid_headers }
+  let(:params) { {} }
 
   describe 'GET /todos/:todo_id/items' do
-    before { get "/todos/#{todo_id}/items" }
+    before { get "/todos/#{todo_id}/items", params: params, headers: headers }
 
     context 'when todo_id exists' do
       it_behaves_like 'a successful request'
@@ -30,7 +33,7 @@ RSpec.describe 'Items API', type: :request do
   end
 
   describe 'GET /todos/:todo_id/items/:id' do
-    before { get "/todos/#{todo_id}/items/#{item_id}" }
+    before { get "/todos/#{todo_id}/items/#{item_id}", params: params, headers: headers }
 
     context 'when the item exists' do
       it_behaves_like 'a successful request'
@@ -55,7 +58,7 @@ RSpec.describe 'Items API', type: :request do
   end
 
   describe 'POST /todos/:todo_id/items' do
-    subject(:create_item) { post "/todos/#{todo_id}/items", params: params }
+    subject(:create_item) { post "/todos/#{todo_id}/items", params: params.to_json, headers: headers }
     before { create_item }
 
     context 'when the params contains the required fields' do
@@ -81,7 +84,7 @@ RSpec.describe 'Items API', type: :request do
   end
 
   describe 'PUT /todos/:todo_id/items/:id' do
-    before { put "/todos/#{todo_id}/items/#{item_id}", params: params }
+    before { put "/todos/#{todo_id}/items/#{item_id}", params: params.to_json, headers: headers }
     let(:params) { { name: 'A different name' } }
 
     context 'when the item exists' do
@@ -105,7 +108,7 @@ RSpec.describe 'Items API', type: :request do
   end
 
   describe 'DELETE /todos/:todo_id/items/:id' do
-    before { delete "/todos/#{todo_id}/items/#{item_id}" }
+    before { delete "/todos/#{todo_id}/items/#{item_id}", params: params, headers: headers }
 
     it_behaves_like 'a no content response'
   end

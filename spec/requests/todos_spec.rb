@@ -1,12 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'Todos API', type: :request do
-  let!(:todos) { create_list(:todo, 10) }
+  let(:user) { create(:user) }
+  let!(:todos) { create_list(:todo, 10, created_by: user.id) }
   let(:todo_id) { todos.last.id }
+  let(:headers) { valid_headers }
+  let(:params) { {} }
   before { subject }
 
   describe 'GET /todos' do
-    subject(:get_all) { get '/todos' }
+    subject(:get_all) { get '/todos', params: params, headers: headers }
 
     it_behaves_like 'a successful request'
 
@@ -17,7 +20,7 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'GET /todos/:id' do
-    subject { get "/todos/#{todo_id}" }
+    subject { get "/todos/#{todo_id}", params: params, headers: headers }
 
     context 'when the record exists' do
 
@@ -41,11 +44,9 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'POST /todos' do
-    subject(:create_todo) { post '/todos', params: params }
+    subject(:create_todo) { post '/todos', params: params.to_json, headers: headers }
 
     context 'when there are missing params' do
-      let(:params) { { title: 'Just a test' } }
-
       it_behaves_like 'an unprocessable entity request'
 
       it 'returns an error message' do
@@ -70,7 +71,7 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'PUT /todos/:id' do
-    before { put "/todos/#{todo_id}", params: params }
+    before { put "/todos/#{todo_id}", params: params.to_json, headers: headers }
 
     context 'when the params are valid' do
       let(:params) { { title: 'Another title' } }
@@ -84,7 +85,7 @@ RSpec.describe 'Todos API', type: :request do
   end
 
   describe 'DELETE /todos/:id' do
-    let(:delete_todo) { delete "/todos/#{todo_id}" }
+    let(:delete_todo) { delete "/todos/#{todo_id}", params: params, headers: headers }
 
     context 'when the id exists' do
       it { expect{ delete_todo }.to change{ Todo.all.count }.by(-1) }
