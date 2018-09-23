@@ -33,6 +33,9 @@ gem 'active_model_serializers'
 # Pagination
 gem 'will_paginate'
 
+# For seeds
+gem 'faker'
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
