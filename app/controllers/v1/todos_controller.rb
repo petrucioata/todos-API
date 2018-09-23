@@ -4,7 +4,7 @@ module V1
 
     # GET /todos
     def index
-      @todos = current_user.todos
+      @todos = current_user.todos.paginate(page: params[:page], per_page: per_page)
       json_response(@todos)
     end
 
@@ -39,6 +39,10 @@ module V1
 
     def set_todo
       @todo = Todo.find(params[:id])
+    end
+
+    def per_page(default = 20)
+      params[:per_page] || default
     end
   end
 end
