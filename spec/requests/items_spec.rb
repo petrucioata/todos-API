@@ -111,5 +111,10 @@ RSpec.describe 'Items API', type: :request do
     before { delete "/todos/#{todo_id}/items/#{item_id}", params: params, headers: headers }
 
     it_behaves_like 'a no content response'
+
+    it 'set the item as deleted' do
+      item = Item.find(item_id)
+      expect(item.state).to eq('deleted')
+    end
   end
 end

@@ -27,7 +27,7 @@ module V1
 
     # DELETE /todos/:todo_id/items/:id
     def destroy
-      @item.destroy
+      @item.update!(state: :deleted)
       head :no_content
     end
 
